@@ -69,10 +69,11 @@ app.post("/api/verify-otp", verifyOTP);
 // STATIC
 const path = require("path");
 
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "../public/login.html"));
-});
+const path = require("path");
 
-app.get("*", (req, res) => {
+app.use(express.static(path.join(__dirname, "../public")));
+
+// fallback route (SAFE)
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, "../public/login.html"));
 });
