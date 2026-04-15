@@ -67,10 +67,10 @@ app.post("/api/send-otp", sendOTP);
 app.post("/api/verify-otp", verifyOTP);
 
 // STATIC
-app.use(express.static("public"));
+const path = require("path");
 
-const PORT = process.env.PORT || 3000;
+app.use(express.static(path.join(__dirname, "../public")));
 
-server.listen(PORT, () => {
-  console.log("Running on port " + PORT);
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/login.html"));
 });
