@@ -1,0 +1,76 @@
+body {
+  background: #0a0c0f;
+  color: #00ff88;
+  font-family: monospace;
+  margin: 0;
+}
+
+.app {
+  max-width: 700px;
+  margin: auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #1e2430;
+  border-right: 1px solid #1e2430;
+}
+
+.header {
+  padding: 10px;
+  border-bottom: 1px solid #1e2430;
+  display: flex;
+  justify-content: space-between;
+}
+
+.logo {
+  letter-spacing: 2px;
+}
+
+.messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.message {
+  margin: 6px 0;
+}
+
+.you {
+  color: #00ff88;
+}
+
+.stranger {
+  color: #4488ff;
+}
+
+.system {
+  color: #888;
+  text-align: center;
+}
+
+.input-area {
+  display: flex;
+  border-top: 1px solid #1e2430;
+  padding: 10px;
+}
+
+.prompt {
+  margin-right: 10px;
+}
+
+input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #00ff88;
+  outline: none;
+}
+
+button {
+  background: transparent;
+  border: 1px solid #00ff88;
+  color: #00ff88;
+  padding: 5px 10px;
+  cursor: pointer;
+}

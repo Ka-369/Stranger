@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>STRANGER.CHAT</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">[ STRANGER.CHAT ]</div>
+    <div id="status">CONNECTING...</div>
+  </header>
+
+  <!-- CHAT -->
+  <div id="messages" class="messages"></div>
+
+  <!-- INPUT -->
+  <div class="input-area">
+    <span class="prompt">&gt;</span>
+    <input id="msg" placeholder="type a message..." />
+    <button onclick="send()">SEND</button>
+  </div>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
