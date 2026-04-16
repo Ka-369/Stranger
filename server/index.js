@@ -12,9 +12,14 @@ const app = express();
 app.use(express.json());
 
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*"
+  }
+});
 
 let waiting = null;
+
 
 // SOCKET AUTH
 io.use((socket, next) => {
@@ -75,4 +80,9 @@ app.use(express.static(path.join(__dirname, "../public")));
 // fallback route (SAFE)
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, "../public/login.html"));
+});
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
 });
