@@ -27,7 +27,6 @@ html, body {
   overflow: hidden;
 }
 
-/* Noise texture */
 body::before {
   content: '';
   position: fixed;
@@ -44,6 +43,7 @@ body::before {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh; /* fixes mobile browser address bar pushing layout */
   max-width: 700px;
   margin: 0 auto;
   padding: 20px 16px;
@@ -63,6 +63,7 @@ body::before {
   padding: 16px 22px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.06) inset;
   animation: fadeDown 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  flex-shrink: 0;
 }
 
 @keyframes fadeDown {
@@ -97,6 +98,7 @@ body::before {
 /* ── MESSAGES ── */
 .messages {
   flex: 1;
+  min-height: 0; /* critical — lets the flex child scroll correctly */
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -110,13 +112,13 @@ body::before {
   box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.06) inset;
   animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: 0.05s;
+  -webkit-overflow-scrolling: touch; /* smooth momentum scroll on iOS */
 }
 
 .messages::-webkit-scrollbar { width: 4px; }
 .messages::-webkit-scrollbar-track { background: transparent; }
 .messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 999px; }
 
-/* Individual message bubbles — add these classes in app.js */
 .message {
   display: flex;
   flex-direction: column;
@@ -131,6 +133,7 @@ body::before {
   animation: msgIn 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
   max-width: 85%;
   align-self: flex-start;
+  word-break: break-word; /* stops long words overflowing on narrow screens */
 }
 
 .message.self {
@@ -185,6 +188,7 @@ body::before {
   box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.06) inset;
   animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: 0.1s;
+  flex-shrink: 0;
 }
 
 .prompt {
@@ -197,13 +201,14 @@ body::before {
 
 .input-area input {
   flex: 1;
+  min-width: 0; /* prevents input overflowing its flex container */
   background: var(--input-bg);
   border: 1px solid var(--input-border);
   border-radius: 10px;
   padding: 12px 16px;
   color: var(--text);
   font-family: inherit;
-  font-size: 14px;
+  font-size: 16px; /* 16px minimum prevents iOS auto-zoom on focus */
   font-weight: 600;
   outline: none;
   transition: border-color 0.2s, background 0.2s;
@@ -230,6 +235,8 @@ body::before {
   box-shadow: 0 4px 16px rgba(0, 130, 255, 0.35);
   transition: filter 0.15s, transform 0.15s, box-shadow 0.15s;
   flex-shrink: 0;
+  touch-action: manipulation;          /* removes 300ms tap delay on mobile */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .input-area button:hover {
@@ -239,9 +246,78 @@ body::before {
 
 .input-area button:active { transform: scale(0.97); }
 
-/* ── RESPONSIVE ── */
+
+/* ================================================================
+   RESPONSIVE BREAKPOINTS
+   ================================================================ */
+
+/* Small phones — up to 480px */
 @media (max-width: 480px) {
-  .app { padding: 12px 10px; gap: 10px; }
-  .logo { font-size: 14px; }
-  .input-area button { padding: 12px 14px; font-size: 12px; }
+  .app {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .header {
+    padding: 11px 14px;
+    border-radius: 12px;
+  }
+
+  .logo {
+    font-size: 13px;
+    letter-spacing: 0.8px;
+  }
+
+  #status {
+    font-size: 10px;
+    padding: 4px 9px;
+    letter-spacing: 0.8px;
+  }
+
+  .messages {
+    padding: 12px;
+    gap: 8px;
+    border-radius: 12px;
+  }
+
+  .message {
+    font-size: 13px;
+    padding: 8px 11px;
+    max-width: 92%;
+  }
+
+  .input-area {
+    padding: 8px 10px;
+    gap: 6px;
+    border-radius: 12px;
+  }
+
+  .prompt { font-size: 15px; }
+
+  .input-area input {
+    padding: 10px 12px;
+  }
+
+  .input-area button {
+    padding: 10px 13px;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+  }
+}
+
+/* Tablets — 481px to 768px */
+@media (min-width: 481px) and (max-width: 768px) {
+  .app {
+    padding: 16px 14px;
+    gap: 12px;
+  }
+
+  .message { max-width: 88%; }
+}
+
+/* When keyboard opens on mobile, viewport height shrinks below 500px.
+   Hide the header to give messages + input more room. */
+@media (max-height: 500px) {
+  .header { display: none; }
+  .app { padding: 6px 10px; gap: 6px; }
 }

@@ -14,11 +14,12 @@ const transporter = nodemailer.createTransport({
 exports.sendOTP = async (req, res) => {
   const { email } = req.body;
 
-  const otp = otpGenerator.generate(6, {
-    digits: true,
-    alphabets: false,
-    specialChars: false
-  });
+const otp = otpGenerator.generate(6, {
+  digits: true,
+  upperCaseAlphabets: false,
+  lowerCaseAlphabets: false,
+  specialChars: false
+});
 
   otpStore[email] = otp;
 
