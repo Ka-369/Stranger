@@ -1,76 +1,247 @@
-body {
-  background: #0a0c0f;
-  color: #00ff88;
-  font-family: monospace;
-  margin: 0;
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-gradient: radial-gradient(ellipse at 70% 30%, #1a5068 0%, #0d2b35 55%, #061820 100%);
+  --card-bg: rgba(30, 58, 69, 0.85);
+  --card-border: rgba(255,255,255,0.07);
+  --input-bg: #243f4d;
+  --input-border: rgba(255,255,255,0.08);
+  --input-focus: rgba(0, 170, 255, 0.45);
+  --placeholder: rgba(255,255,255,0.35);
+  --text: #ffffff;
+  --subtext: rgba(255,255,255,0.55);
+  --accent: #00aaff;
+  --accent-to: #0070e0;
+  --msg-bg: rgba(255,255,255,0.05);
+  --msg-border: rgba(255,255,255,0.06);
+  --radius: 14px;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text);
+  overflow: hidden;
+}
+
+/* Noise texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.4;
+  z-index: 0;
 }
 
 .app {
-  max-width: 700px;
-  margin: auto;
-  height: 100vh;
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  border-left: 1px solid #1e2430;
-  border-right: 1px solid #1e2430;
+  height: 100vh;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  gap: 14px;
 }
 
+/* ── HEADER ── */
 .header {
-  padding: 10px;
-  border-bottom: 1px solid #1e2430;
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 16px 22px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.06) inset;
+  animation: fadeDown 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .logo {
-  letter-spacing: 2px;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--text);
 }
 
+#status {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  padding: 5px 12px;
+  background: rgba(0, 170, 255, 0.1);
+  border: 1px solid rgba(0, 170, 255, 0.25);
+  border-radius: 999px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+
+/* ── MESSAGES ── */
 .messages {
   flex: 1;
-  padding: 10px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.06) inset;
+  animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.05s;
 }
 
+.messages::-webkit-scrollbar { width: 4px; }
+.messages::-webkit-scrollbar-track { background: transparent; }
+.messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 999px; }
+
+/* Individual message bubbles — add these classes in app.js */
 .message {
-  margin: 6px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 14px;
+  background: var(--msg-bg);
+  border: 1px solid var(--msg-border);
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  animation: msgIn 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+  max-width: 85%;
+  align-self: flex-start;
 }
 
-.you {
-  color: #00ff88;
+.message.self {
+  align-self: flex-end;
+  background: rgba(0, 170, 255, 0.12);
+  border-color: rgba(0, 170, 255, 0.2);
 }
 
-.stranger {
-  color: #4488ff;
+.message .sender {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: var(--accent);
+  text-transform: uppercase;
 }
 
-.system {
-  color: #888;
+.message.self .sender { color: rgba(255,255,255,0.45); }
+
+.message.system {
+  align-self: center;
+  background: transparent;
+  border-color: transparent;
+  color: var(--subtext);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
   text-align: center;
+  padding: 4px 0;
 }
 
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── INPUT AREA ── */
 .input-area {
   display: flex;
-  border-top: 1px solid #1e2430;
-  padding: 10px;
+  align-items: center;
+  gap: 10px;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.06) inset;
+  animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.1s;
 }
 
 .prompt {
-  margin-right: 10px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--accent);
+  user-select: none;
+  flex-shrink: 0;
 }
 
-input {
+.input-area input {
   flex: 1;
-  background: transparent;
-  border: none;
-  color: #00ff88;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
   outline: none;
+  transition: border-color 0.2s, background 0.2s;
 }
 
-button {
-  background: transparent;
-  border: 1px solid #00ff88;
-  color: #00ff88;
-  padding: 5px 10px;
+.input-area input::placeholder { color: var(--placeholder); }
+
+.input-area input:focus {
+  border-color: var(--input-focus);
+  background: #2a4a5a;
+}
+
+.input-area button {
+  padding: 12px 22px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-to));
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
   cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 130, 255, 0.35);
+  transition: filter 0.15s, transform 0.15s, box-shadow 0.15s;
+  flex-shrink: 0;
+}
+
+.input-area button:hover {
+  filter: brightness(1.12);
+  box-shadow: 0 6px 24px rgba(0, 130, 255, 0.5);
+}
+
+.input-area button:active { transform: scale(0.97); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 480px) {
+  .app { padding: 12px 10px; gap: 10px; }
+  .logo { font-size: 14px; }
+  .input-area button { padding: 12px 14px; font-size: 12px; }
 }
