@@ -7,22 +7,29 @@ const { otpStore } = require("./otp");
 exports.register = async (req, res) => {
   const { name, email, password, otp } = req.body;
 
+  console.log("REGISTER HIT:", name, email);
+
   if (otpStore[email] !== otp) {
+    console.log("OTP FAILED");
     return res.status(400).json({ message: "Invalid OTP" });
   }
 
   const hashed = await bcrypt.hash(password, 10);
 
-  try {
-    db.prepare(
-      "INSERT INTO users (name,email,password) VALUES (?,?,?)"
-    ).run(name, email, hashed);
+  db.query(
+    "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+    [name, email, hashed],
+    (err) => {
+      if (err) {
+        console.log("DB ERROR:", err);
+        return res.status(400).json({ message: "User already exists" });
+      }
 
-    delete otpStore[email];
-    res.json({ message: "Registered" });
-  } catch {
-    res.status(400).json({ message: "User already exists" });
-  }
+      console.log("USER INSERTED");
+      delete otpStore[email];
+      res.json({ message: "Registered" });
+    }
+  );
 };
 
 

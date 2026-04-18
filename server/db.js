@@ -1,15 +1,19 @@
-const Database = require("better-sqlite3");
+const mysql = require("mysql2");
 
-const db = new Database("database.db");
+const db = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT || 3306
+});
 
-// create table if not exists
-db.prepare(`
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    email TEXT UNIQUE,
-    password TEXT
-  )
-`).run();
+db.connect(err => {
+  if (err) {
+    console.error("DB ERROR:", err);
+  } else {
+    console.log("MySQL Connected");
+  }
+});
 
 module.exports = db;
