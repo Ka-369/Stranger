@@ -2,84 +2,119 @@
 <html>
 <head>
   <title>Auth</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="login.css">
 </head>
-<body style="background:black;color:white;text-align:center">
+<body>
 
-<h2>Register</h2>
+<div class="wrapper">
+  <div class="card">
 
-<input id="name" placeholder="Name"><br><br>
-<input id="email" placeholder="Email"><br><br>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('login')">Login</button>
+      <button class="tab-btn" onclick="showTab('register')">Register</button>
+    </div>
 
-<button onclick="sendOTP()">Send OTP</button><br><br>
+    <!-- LOGIN PANEL -->
+    <div class="panel active" id="panel-login">
+      <div class="panel-title">Welcome Back</div>
 
-<input id="otp" placeholder="Enter OTP"><br><br>
-<input id="password" type="password" placeholder="Password"><br><br>
+      <div class="field">
+        <input id="loginEmail" type="email" placeholder="Email">
+      </div>
+      <div class="field">
+        <input id="loginPassword" type="password" placeholder="Password">
+      </div>
 
-<button onclick="register()">Register</button>
+      <button class="btn-primary" onclick="login()">Login</button>
 
-<hr>
+      <p class="switch-text">
+        Don't have an account? <a href="#" onclick="showTab('register'); return false;">Sign up</a>
+      </p>
+    </div>
 
-<h2>Login</h2>
+    <!-- REGISTER PANEL -->
+    <div class="panel" id="panel-register">
+      <div class="panel-title">Create Account</div>
 
-<input id="loginEmail" placeholder="Email"><br><br>
-<input id="loginPassword" type="password" placeholder="Password"><br><br>
+      <div class="field">
+        <input id="name" placeholder="Full Name">
+      </div>
+      <div class="field">
+        <input id="email" type="email" placeholder="Email">
+      </div>
+      <div class="field">
+        <div class="otp-row">
+          <input id="otp" placeholder="Enter OTP">
+          <button class="otp-send-btn" onclick="sendOTP()">Send OTP</button>
+        </div>
+      </div>
+      <div class="field">
+        <input id="password" type="password" placeholder="Password">
+      </div>
 
-<button onclick="login()">Login</button>
+      <button class="btn-primary" onclick="register()">Register</button>
+
+      <p class="switch-text">
+        Already have an account? <a href="#" onclick="showTab('login'); return false;">Sign in</a>
+      </p>
+    </div>
+
+  </div>
+</div>
 
 <script>
-const BASE = "/api";
+  const BASE = "/api";
 
-// SEND OTP
-async function sendOTP() {
-  const email = document.getElementById("email").value;
+  function showTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) =>
+      b.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'))
+    );
+    document.getElementById('panel-login').classList.toggle('active', tab === 'login');
+    document.getElementById('panel-register').classList.toggle('active', tab === 'register');
+  }
 
-  const res = await fetch(BASE + "/send-otp", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({ email })
-  });
-
-  const data = await res.json();
-  alert(data.message);
-}
-
-// REGISTER
-async function register() {
-  const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const otp = document.getElementById("otp").value;
-
-  const res = await fetch(BASE + "/register", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({ name, email, password, otp })
-  });
-
-  const data = await res.json();
-  alert(data.message);
-}
-
-// LOGIN
-async function login() {
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
-
-  const res = await fetch(BASE + "/login", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({ email, password })
-  });
-
-  const data = await res.json();
-
-  if(res.ok){
-    localStorage.setItem("token", data.token);
-    window.location.href = "/index.html";
-  } else {
+  async function sendOTP() {
+    const email = document.getElementById("email").value;
+    const res = await fetch(BASE + "/send-otp", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
     alert(data.message);
   }
-}
+
+  async function register() {
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const otp = document.getElementById("otp").value;
+    const res = await fetch(BASE + "/register", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ name, email, password, otp })
+    });
+    const data = await res.json();
+    alert(data.message);
+  }
+
+  async function login() {
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+    const res = await fetch(BASE + "/login", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem("token", data.token);
+      window.location.href = "/index.html";
+    } else {
+      alert(data.message);
+    }
+  }
 </script>
 
 </body>
