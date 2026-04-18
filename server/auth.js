@@ -37,21 +37,31 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = db.prepare(
-    "SELECT * FROM users WHERE email=?"
-  ).get(email);
+  db.query(
+    "SELECT * FROM users WHERE email = ?",
+    [email],
+    async (err, results) => {
 
-  if (!user) {
-    return res.status(400).json({ message: "User not found" });
-  }
+      if (err) {
+        console.log("DB ERROR:", err);
+        return res.status(500).json({ message: "Server error" });
+      }
 
-  const match = await bcrypt.compare(password, user.password);
+      if (results.length === 0) {
+        return res.status(400).json({ message: "User not found" });
+      }
 
-  if (!match) {
-    return res.status(401).json({ message: "Wrong password" });
-  }
+      const user = results[0];
 
-  const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
+      const match = await bcrypt.compare(password, user.password);
 
-  res.json({ token });
+      if (!match) {
+        return res.status(401).json({ message: "Wrong password" });
+      }
+
+      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
+
+      res.json({ token });
+    }
+  );
 };
